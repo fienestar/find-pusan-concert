@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>FindPusanConcert</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
+        integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <link href="/assets/css/general.css" rel="stylesheet" />
+</head>
+
+<body>
+    <nav id="nav" style="background-color: #ab000d">
+        <a href="/" style="color: white">FindPusanConcert</a>
+    </nav>
+    <main>
+        <!--필터-->
+        <aside>
+            <form>
+                <div>👇 <input type="date" name="begin" id="begin" /></div>
+                <div>👆 <input type="date" name="end" id="end" /></div>
+                <div><input type="number" style="width: 15%;" name="age" id="age" value="-1">세 이상</div>
+                
+                <div>
+                    <h1>테마</h1>
+                    <div><input type="checkbox" name="theme" value="1"> 설레임</div>
+                    <div><input type="checkbox" name="theme" value="2"> 즐거움</div>
+                    <div><input type="checkbox" name="theme" value="3"> 특별한</div>
+                    <div><input type="checkbox" name="theme" value="4"> 잔잔한</div>
+                    <div><input type="checkbox" name="theme" value="5"> 감동적인</div>
+                    <div><input type="checkbox" name="theme" value="1001"> 봄</div>
+                    <div><input type="checkbox" name="theme" value="1002"> 여름</div>
+                    <div><input type="checkbox" name="theme" value="1003"> 가을</div>
+                    <div><input type="checkbox" name="theme" value="1004"> 겨울</div>
+                    <div><input type="checkbox" name="theme" value="1007"> 신비</div>
+                    <div><input type="checkbox" name="theme" value="1009"> 어린이날</div>
+                    <div><input type="checkbox" name="theme" value="1010"> 어버이날</div>
+                    <div><input type="checkbox" name="theme" value="1011"> 결혼기념일</div>
+                    <div><input type="checkbox" name="theme" value="1012"> 크리스마스</div>
+                    <div><input type="checkbox" name="theme" value="2001"> 혼자</div>
+                    <div><input type="checkbox" name="theme" value="2002"> 친구</div>
+                    <div><input type="checkbox" name="theme" value="2003"> 커플</div>
+                    <div><input type="checkbox" name="theme" value="2004"> 자녀</div>
+                    <div><input type="checkbox" name="theme" value="2005"> 부모</div>
+                    <div><input type="checkbox" name="theme" value="2006"> 가족</div>
+                    <div><input type="checkbox" name="theme" value="3001"> 내한</div>
+                    <div><input type="checkbox" name="theme" value="3002"> K-POP</div>
+                    <div><input type="checkbox" name="theme" value="3003"> ROCK</div>
+                    <div><input type="checkbox" name="theme" value="3004"> 발라드</div>
+                    <div><input type="checkbox" name="theme" value="3005"> 댄스</div>
+                    <div><input type="checkbox" name="theme" value="3006"> 재즈</div>
+                    <div><input type="checkbox" name="theme" value="3007"> 소울</div>
+                    <div><input type="checkbox" name="theme" value="3008"> R&B</div>
+                    <div><input type="checkbox" name="theme" value="3009"> 힙합</div>
+                    <div><input type="checkbox" name="theme" value="3010"> 인디</div>
+                    <div><input type="checkbox" name="theme" value="4001"> 연극</div>
+                    <div><input type="checkbox" name="theme" value="4002"> 뮤지컬</div>
+                    <div><input type="checkbox" name="theme" value="4003"> 클래식</div>
+                    <div><input type="checkbox" name="theme" value="4004"> 전통예술</div>
+                    <div><input type="checkbox" name="theme" value="4007"> 무용</div>
+                    <div><input type="checkbox" name="theme" value="4008"> 기타</div>
+                    <div><input type="checkbox" name="theme" value="5001"> 한국화</div>
+                    <div><input type="checkbox" name="theme" value="5002"> 양화</div>
+                    <div><input type="checkbox" name="theme" value="5003"> 조각</div>
+                    <div><input type="checkbox" name="theme" value="5004"> 전통미술</div>
+                    <div><input type="checkbox" name="theme" value="5005"> 사진</div>
+                    <div><input type="checkbox" name="theme" value="5006"> 판화</div>
+                    <div><input type="checkbox" name="theme" value="5007"> 수채화</div>
+                    <div><input type="checkbox" name="theme" value="5008"> 공예</div>
+                    <div><input type="checkbox" name="theme" value="5009"> 문인화</div>
+                    <div><input type="checkbox" name="theme" value="5010"> 서예</div>
+                    <div><input type="checkbox" name="theme" value="5011"> 기타</div>
+                    <hr />
+                </div>
+            </form>
+        </aside>
+        <!--결과 확인-->
+        <div class="result">
+            <div id="card-box">
+
+            </div>
+            <div id="status-box">
+                검색하는 중
+            </div>
+        </div>
+        <script>
+            const DEBUG_MODE = false
+        </script>
+        <script src="/assets/js/concert.js"></script>
+        <script src="/assets/js/status-box.js"></script>
+        <script src="/assets/js/parse-querystring.js"></script>
+        <script>
+            $(document).scroll(() => {
+                if ($('#nav')[0].getBoundingClientRect().top <= -100)
+                    $('#go-up-button').show()
+                else
+                    $('#go-up-button').hide()
+            })
+
+            function hashForm()
+            {
+                let data = new FormData($('form')[0])
+                let it = data.entries()
+                let result = []
+                
+                for(let pair of it)
+                    result.push(pair[0] + '=' + pair[1])
+
+                return result.join('&')
+            }
+
+            let old_hash = hashForm()
+
+            $("input").on("propertychange change keyup paste input", function () {
+                let hash = hashForm()
+                
+                if(old_hash != hash){
+                    update()
+                    old_hash = hash
+                }
+            });
+
+            function gotoMain() {
+                window.location.href = '/'
+            }
+
+            function isValidDateFormat(date) {
+                if (!date || !date.match || !date.match(/\d{4}-\d{2}-\d{2}/))
+                    gotoMain()
+
+                if (Number.isNaN(+new Date(date)))
+                    gotoMain()
+
+                return date
+            }
+
+            let form_begin = document.getElementById('begin')
+            let form_end = document.getElementById('end')
+            let form_min_age = document.getElementById('age')
+
+            if (
+                [parsed_query_string.begin, parsed_query_string.end]
+                    .map(isValidDateFormat)
+                    .some(is_valid => !is_valid)
+            )
+                goto_main()
+
+            form_begin.value = parsed_query_string.begin
+            form_end.value = parsed_query_string.end
+
+            // 날짜간 대소 비교가 가능한 숫자로 반환해야합니다.
+            function hashDate(date)
+            {
+                date = new Date(date)
+
+                let sum = 0
+
+                sum *= 10000
+                sum += date.getFullYear()
+
+                sum *= 100
+                sum += date.getMonth()
+
+                sum *= 100
+                sum += date.getDate()
+
+                return sum
+            }
+
+            let filters = {
+                dateFilter: function dateFilter(concert, force = false) {
+                    if(force){
+                        dateFilter.begin = hashDate(form_begin.value)
+                        dateFilter.end = hashDate(form_end.value)
+                        return true
+                    }
+
+                    let begin = hashDate(concert.op_st_dt)
+                    let end = hashDate(concert.op_ed_dt)
+
+                    return dateFilter.begin <= begin && end <= dateFilter.end
+                },
+                themeFilter: function themeFilter(concert, force = false) {
+                    if(force){
+                        let query_list = hashForm().split('&')
+                        themeFilter.allow_table = {}
+                        themeFilter.need_filter = false
+
+                        query_list.forEach(query => {
+                            let split = query.split('=')
+
+                            if(split[0] == 'theme'){
+                                themeFilter.allow_table[split[1]] = true
+                                themeFilter.need_filter = true
+                            }
+                        })
+
+                        return true
+                    }
+                        
+                    if(!themeFilter.need_filter)
+                        return true
+
+                    return concert.theme.split(',').some(theme=>themeFilter.allow_table[theme])
+                },
+                ageFilter: function ageFilter(concert, force = false) {
+                    if(force){
+                        if(form_min_age.value == '-1')
+                            ageFilter.need_filter = false
+                        else{
+                            ageFilter.need_filter = true
+                            ageFilter.min_age = +form_min_age.value
+                        }
+                        
+                        return true
+                    }
+                    
+                    if(!ageFilter.need_filter)
+                        return true
+                    else
+                        return ageFilter.min_age >= getMinAge(concert)
+                }
+            }
+            const numOfRows = 1000
+
+            function getConcert() {
+                if (!getConcert.data)
+                    getConcert.data = concert_service.getList(1, numOfRows)
+
+                return getConcert.data
+            }
+
+            function filter(concerts) {
+                let filtered = []
+
+                Object.values(filters).forEach(filter => filter(null, true))
+
+                return [Object.values(filters).reduce(
+                    (concerts, filter) => concerts.filter(
+                        item => {
+                            if (filter(item))
+                                return true
+                            else {
+                                filtered.push(item)
+                                return false
+                            }
+                        }
+                    ),
+                    concerts
+                ), filtered]
+            }
+
+            let card_box = document.getElementById('card-box')
+
+            let theme_table = { "1": { "name": "설레임", "color": "#EECCEE" }, "2": { "name": "즐거움", "color": "#FC7399" }, "3": { "name": "특별한", "color": "#EE4A5D" }, "4": { "name": "잔잔한", "color": "#BEEBFD" }, "5": { "name": "감동적인", "color": "#9CDFF0" }, "1001": { "name": "봄", "color": "#89CFF0" }, "1002": { "name": "여름", "color": "#8AB1F0" }, "1003": { "name": "가을", "color": "#F1B7C6" }, "1004": { "name": "겨울", "color": "#F49AC1" }, "1007": { "name": "신비", "color": "#FFAFD8" }, "1009": { "name": "어린이날", "color": "#F2CFA5" }, "1010": { "name": "어버이날", "color": "#FCFFB0" }, "1011": { "name": "결혼기념일", "color": "#AFC4E7" }, "1012": { "name": "크리스마스", "color": "#B5C7ED" }, "2001": { "name": "혼자", "color": "#CF71AE" }, "2002": { "name": "친구", "color": "#B3DFB5" }, "2003": { "name": "커플", "color": "#F9F4CF" }, "2004": { "name": "자녀", "color": "#D3C0D3" }, "2005": { "name": "부모", "color": "#F7E781" }, "2006": { "name": "가족", "color": "#BDD0EB" }, "3001": { "name": "내한", "color": "#F8E3D4" }, "3002": { "name": "K-POP", "color": "#D6D0F5" }, "3003": { "name": "ROCK", "color": "#F5D4E9" }, "3004": { "name": "발라드", "color": "#FEB7B3" }, "3005": { "name": "댄스", "color": "#FFD4B8" }, "3006": { "name": "재즈", "color": "#EEB7B4" }, "3007": { "name": "소울", "color": "#FCF1DD" }, "3008": { "name": "R&B", "color": "#D2EBD8" }, "3009": { "name": "힙합", "color": "#97E5D7" }, "3010": { "name": "인디", "color": "#FFE5D1" }, "4001": { "name": "연극", "color": "#FDAA9D" }, "4002": { "name": "뮤지컬", "color": "#D9FAE0" }, "4003": { "name": "클래식", "color": "#C7F0DC" }, "4004": { "name": "전통예술", "color": "#AFE3CE" }, "4006": null, "4007": { "name": "무용", "color": "#FCF9F2" }, "4008": { "name": "기타", "color": "#F8E2DF" }, "5001": { "name": "한국화", "color": "#F5D0DC" }, "5002": { "name": "양화", "color": "#FFB6C2" }, "5003": { "name": "조각", "color": "#FFD4D7" }, "5004": { "name": "전통미술", "color": "#FFE3E4" }, "5005": { "name": "사진", "color": "#F5FFFB" }, "5006": { "name": "판화", "color": "#D7CFF6" }, "5007": { "name": "수채화", "color": "#D8DDFE" }, "5008": { "name": "공예", "color": "#E6F0F0" }, "5009": { "name": "문인화", "color": "#C4F4FE" }, "5010": { "name": "서예", "color": "#BEE9B4" }, "5011": { "name": "기타", "color": "#FDFA87" } }
+
+            function updateThemeList(concert) {
+                if (concert.known_theme_list && !concert.element_need_update)
+                    return;
+
+                let themes = concert.theme
+
+                if (!themes || themes == "null")
+                    themes = ""
+
+                let known_theme_list = []
+                for (theme of themes.split(','))
+                    if (theme_table[theme])
+                        known_theme_list.push(theme_table[theme])
+
+                concert.known_theme_list = known_theme_list
+            }
+
+            function updateTheme(card, concert) {
+                if (card.style.background && !concert.element_need_update)
+                    return;
+
+                updateThemeList(concert)
+
+                if(concert.known_theme_list.length){
+                    card.appendChild(document.createElement('br'))
+                    card.appendChild(createDiv('tag',
+                        Object.values(concert.known_theme_list)
+                            .map(theme => `#${theme.name}`)
+                            .join(' ')
+                    ))
+                }
+
+                let list = concert.known_theme_list.filter(theme => theme.color)
+                let color = ''
+
+                if (list.length == 0)
+                    color = '#D5CB8E'
+                else if (list.length == 1)
+                    color = list[0].color
+                else
+                    color = `linear-gradient(315deg, ${list[1].color} 0% 50%, ${list[0].color} 50% 100%)`
+
+                card.style.background = color
+            }
+
+            function getMinAge(concert)
+            {
+                if(concert.min_age !== undefined)
+                    return concert.min_age
+
+                if(isUsefulText(concert.rating)){
+                    let rating = concert.rating
+                    let matched = rating.match(/만? ?(\d+)세 ?이상/)
+
+                    if (matched)
+                        return +matched[1]
+
+                    matched = rating.match(/만? ?(\d+)개월 ?이상/)
+                    if(matched)
+                        return (+matched[1])/12
+
+                    matched = rating.match(/전체 ?관람가/)
+                    if (matched)
+                        return 0
+
+                    throw Error('unknown rating: ' + rating)
+                }
+
+                return 0
+            }
+
+            function getRatingIcon(rating) {
+                let matched = rating.match(/만? ?(\d+)(세|개월) ?이상/)
+
+                if (matched) {
+                    return createDiv('rating', matched[1], { color: 'black', title: rating })
+                }
+
+                matched = rating.match(/전체 ?관람가/)
+                if (matched) {
+                    return createDiv('rating', 'A', { color: 'green', title: rating })
+                }
+
+                throw Error('unknown rating: ' + rating)
+            }
+
+            function isUsefulText(data)
+            {
+                if(data === undefined)
+                    return false
+                data = data.trim()
+                return data && data != 'null' && data != '-' && data != 0
+            }
+
+            function updateDetail(concert) {
+                if (concert.detailed && concert.element_need_update === false)
+                    return false;
+
+                let card = concert.element
+
+                concert_service.makeDetail(concert, function () {
+                    if(isUsefulText(concert.casting))
+                        addTextToElement(card, '캐스팅: ' + concert.casting)
+
+                    if (isUsefulText(concert.avg_star))
+                        addTextToElement(card, '평점: ' + (+concert.avg_star).toFixed(1))
+
+                    if (isUsefulText(concert.price))
+                        addTextToElement(card, '가격: ' + concert.price)
+
+                    if (isUsefulText(concert.showtime))
+                        addTextToElement(card, '상영 시각: ' + concert.showtime)
+
+                    if (isUsefulText(concert.runtime))
+                        addTextToElement(card, '상영 시간: ' + concert.runtime)
+                    
+                    updateTheme(card, concert)
+
+                    if(isUsefulText(concert.rating))
+                        card.insertBefore(getRatingIcon(concert.rating), card.children[1])
+
+                    concert.element_need_update = false;
+                })
+
+                return concert.detailed || sessionStorage.getItem(concert.code[2])
+            }
+
+            function addTextToElement(card, text) {
+                card.appendChild(document.createElement('br'))
+                card.appendChild(document.createTextNode(text))
+            }
+
+            let well_known_place_table = {
+                '(재)영화의전당': '영화의전당',
+                '벡스코 (BEXCO)': '벡스코',
+                'PANACA B': '파나카B'
+            }
+
+            function replaceWellKnownPlace(place) {
+                return well_known_place_table[place] || place
+            }
+
+            function constructCard(concert) {
+                if (concert.element)
+                    return;
+
+                let card = document.createElement('div')
+
+                card.className = 'card'
+                card.style.display = 'none'
+
+                let title_node = document.createElement('b')
+                title_node.innerText = concert.title
+                card.appendChild(title_node)
+                if (concert.op_at == 'Y')
+                    card.appendChild(createIcon('all_inclusive', { color: 'blue', title: '오픈런' }));
+                if (concert.pay_at == 'Y')
+                    card.appendChild(createIcon('payments', { color: 'green', title: '유료' }));
+                
+                card.appendChild(createIcon('map', { color: 'blue', title: concert.place_nm }))
+                let map_iframe = document.createElement('iframe')
+                map_iframe.src = './map-view.html?keyword='+replaceWellKnownPlace(concert.place_nm)
+                map_iframe.setAttribute('scrolling', 'no')
+                card.appendChild(map_iframe)
+                
+                card.appendChild(document.createElement('br'))
+
+                if (concert.op_st_dt == concert.op_ed_dt)
+                    addTextToElement(card, `기간: ${concert.op_st_dt}`)
+                else
+                    addTextToElement(card, `기간: ${concert.op_st_dt} ~ ${concert.op_ed_dt}`)
+
+                addTextToElement(card, `장소: ${concert.place_nm}`)
+
+                card_box.appendChild(card)
+
+                concert.element = card
+            }
+
+            function markShow(concerts, bool) {
+                if (bool === undefined)
+                    bool = true
+
+                concerts.forEach(
+                    concert => concert.display = bool
+                )
+            }
+
+            function show(concerts) {
+                concerts.forEach(
+                    concert => {
+                        if (concert.display)
+                            concert.element.style.display = 'block'
+                        else if (concert.element)
+                            concert.element.style.display = 'none'
+                    }
+                )
+            }
+
+            function createDiv(c, text, option) {
+                let e = document.createElement('div')
+                e.className = c
+
+                if (text !== undefined)
+                    e.innerText = text
+                
+                if(option){
+                    if(option.color)
+                        e.style.color = option.color
+                    
+                    if(option.inline)
+                        e.style.display = 'inline'
+                    
+                    if(option.title)
+                        e.title = option.title
+                }
+                
+                return e
+            }
+
+            function createIcon(icon_name, option) {
+                let e = document.createElement('i')
+
+                e.className = "material-icons"
+                e.innerText = icon_name
+
+                option = option || {}
+                if (option.title !== undefined)
+                    e.title = option.title
+
+                if (option.color !== undefined)
+                    e.style.color = option.color
+
+                if (icon_name == 'map')
+                    e.setAttribute('map-tooltip', '')
+
+                return e;
+            }
+
+            function update() {
+                card_box.style.display = 'none'
+                status_box.setLoading()
+                status_box.show()
+                let concerts = getConcert()
+                let classified = filter(concerts)
+
+                if (classified[0].length == 0) {
+
+                    status_box.setNotFound()
+                    status_box.show()
+                    return;
+                }
+
+                markShow(classified[0], true)
+                markShow(classified[1], false)
+
+                classified[0].forEach(constructCard)
+
+                status_box.hide()
+                show(concerts)
+                card_box.style.display = 'block'
+
+                function lazyUpdate(i) {
+                    if (i == classified[0].length)
+                        return;
+                    
+                    if (updateDetail(classified[0][i]))
+                        lazyUpdate(i + 1)
+                    else
+                        setTimeout(
+                            () => lazyUpdate(i + 1),
+                            250
+                        )
+                }
+
+                lazyUpdate(0)
+            }
+            $(()=>{
+                try {
+                    update()
+                } catch (e) {
+                    console.log(e + e.stack)
+                    card_box.style.display = 'none'
+                    status_box.setError()
+                    status_box.show()
+                }
+            })
+        </script>
+        <div id="go-up-button" style="position: fixed; bottom: 40px; left: 40px; display: none;">
+            <a href="#nav"><i class="material-icons">arrow_upward</i></a>
+        </div>
+    </main>
+</body>
+
+</html>

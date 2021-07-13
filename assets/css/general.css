@@ -1,0 +1,197 @@
+* {
+	box-sizing: border-box;
+}
+
+html {
+	margin: 0px;
+	display: block;
+}
+
+nav {
+	background-color: white;
+	flex-flow: row nowrap;
+	justify-content: flex-start;
+	display: flex;
+	padding: 13px 16px;
+}
+
+a {
+	text-decoration: none;
+}
+
+nav > a {
+	color: black;
+	font-size: 20px;
+}
+
+body {
+	line-height: 1.5;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	color: black;
+	text-align: left;
+	margin: 0;
+}
+
+div {
+	width: 100%;
+	margin-right: auto;
+	margin-left: auto;
+	position: relative;
+}
+
+header {
+	background: url("/assets/img/bg-concert.jpg") no-repeat center;
+	background-size: cover;
+	padding-top: 192px;
+	padding-bottom: 192px;
+	color: white;
+	text-align: center;
+	position: relative;
+}
+
+.overlay {
+	background-color: black;
+	opacity: 0.2;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+input[type="date"] {
+	display: inline;
+	height: 45px;
+	padding: 6px 12px;
+	font-size: 16px;
+	color: #495057;
+	border: 1px gray;
+	border-radius: 4px;
+	cursor: default;
+}
+
+form > input[type="date"] {
+	width: 40%;
+}
+
+.form-box {
+	max-width: 540px;
+	padding: 0px 15px;
+}
+
+button[type="submit"] {
+	color: white;
+	background-color: purple;
+	border-color: rebeccapurple;
+	width: 70%;
+	border-radius: 4px;
+	line-height: 3;
+	opacity: 0.85;
+}
+
+.find-page-form {
+	background-color: gray;
+	padding: 10px;
+}
+
+aside > div > input[type="date"] {
+	width: 80%;
+	font-weight: 1000;
+}
+
+main {
+	display: flex;
+	max-width: 1000px;
+	margin-right: auto;
+	margin-left: auto;
+	padding-left: 16px;
+	padding-right: 16px;
+	width: 100%;
+}
+
+aside {
+	padding-right: 40px;
+	padding-left: 16px;
+	flex: 0 0 calc(100% / 3);
+	max-width: calc(100% / 3);
+	position: relative;
+}
+
+.result {
+	padding-right: 16px;
+	padding-left: 10px;
+	flex: 0 0 calc(200% / 3);
+	max-width: calc(200% / 3);
+	position: relative;
+}
+
+#status-box {
+	text-align: center;
+	padding: 10% 0%;
+	margin-top: 5%;
+	background-color: rgb(228, 228, 228);
+	border-radius: 4px;
+}
+
+#card-box {
+	margin-top: 5%;
+	display: none;
+}
+
+.card {
+	border: solid 1px gray;
+	width: 90%;
+	margin: 20px 0px 20px 30px;
+	padding: 20px;
+	min-height: 200px;
+	background-color: rgb(179, 179, 179);
+	color: rgb(51, 51, 51);
+	border-radius: 3px;
+	box-shadow: 0 1px 0 rgba(9, 30, 66, 0.25);
+}
+
+.tag {
+	color: #00387b;
+}
+
+.card > b {
+	width: 80%;
+}
+
+.card > i,
+.rating {
+	float: right;
+	padding: 2px;
+}
+
+.rating {
+	width: 30px;
+	text-align: center;
+	font-size: 20px;
+	line-height: 0.9;
+	border-radius: 50%;
+	background-color: white;
+	box-shadow: 0 1px 0 rgba(9, 30, 66, 0.25);
+}
+
+i[map-tooltip] {
+	position: relative;
+	display: inline-block;
+}
+
+i[map-tooltip]+iframe {
+	visibility: hidden;
+	position: absolute;
+	margin: 0px;
+	padding: 0px;
+	z-index: 98;
+	width: 200px;
+	left: calc(90% - 200px);
+	top: 40px;
+	background-color: white;
+}
+
+i[map-tooltip]:hover+iframe,
+i[map-tooltip]+iframe:hover {
+	visibility: visible;
+}

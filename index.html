@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="/assets/css/general.css" rel="stylesheet"/>
+    <script>
+        window.onload = ()=>{
+            let form_begin = document.getElementById('begin');
+            let form_end = document.getElementById('end');
+
+            let date_value = new Date().toJSON().slice(0,10);
+            form_begin.value = date_value;
+
+            let split = date_value.split('-');
+            split[0] = +split[0] + 1;
+            form_end.value = split.join('-')
+        }
+    </script>
+</head>
+
+<body>
+    <nav>
+        <a href="#">FindPusanConcert</a>
+    </nav>
+    <header>
+        <div class="overlay"></div>
+        <div class="form-box">
+            <h1>부산에서 열리는 콘서트 정보를 확인하세요!</h1>
+            <form action="/find.html">
+                <input name="begin" id="begin" type="date" required/> ~ <input name="end" id="end" type="date" required /><br/><br/>
+                <button type="submit">확인하기</button>
+            </form>
+        </div>
+    </header>
+</body>
+
+</html>
